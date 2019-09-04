@@ -44,4 +44,4 @@ mod_rf <- randomForest(x=x, y=y, importance = TRUE, ntree = 500)
 
 sub <- data.frame('Id' = test_data$Id,
                   'Cover_Type' = predict(mod_rf, test_x))
-write.csv(sub, file = './outputs/submission_rf_v1.csv', row.names = F)
+write.csv(sub, file = './submission/submission_rf_v1.csv', row.names = F)
