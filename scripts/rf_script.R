@@ -39,9 +39,49 @@ dev.off()
 # Note: soil_type7, soil_type15 have no representation in the train dataset
 # but have 105 and 3 (respectivly) observations in the test dataset
 
-# Draft model - Random forest V1-------------------------------------------
+# Random forest V1 - Draft ------------------------------------------
 mod_rf <- randomForest(x=x, y=y, importance = TRUE, ntree = 500)
 
 sub <- data.frame('Id' = test_data$Id,
                   'Cover_Type' = predict(mod_rf, test_x))
-write.csv(sub, file = './submission/submission_rf_v1.csv', row.names = F)
+write.csv(sub, file = './submissions/submission_rf_v1.csv', row.names = F)
+
+# Random forest V2 - Parameter search----------------------------------
+# https://rpubs.com/phamdinhkhanh/389752
+# library(e1071)
+# library(mlbench)
+library(randomForest)
+library(caret)
+
+# Allow to replicate results
+set.seed(123)
+
+# 10 folds repeat 3 times and search grid parameters
+control <- trainControl(method = 'repeatedcv', 
+                        number = 10, 
+                        repeats = 3,
+                        search = 'grid')
+
+# Grid parameters to search
+tunegrid <- expand.grid(mtry = 16:26)
+mod_rf <- train(x = x, y = y, 
+                    method = 'rf', 
+                    metric = 'Accuracy', 
+                    tuneGrid = tunegrid, 
+                    trControl = control)
+
+
+sub <- data.frame('Id' = test_data$Id,
+                  'Cover_Type' = predict(mod_rf$finalModel, test_x))
+write.csv(sub, file = './submissions/submission_rf_v2.csv', row.names = F)
+
+
+
+
+
+
+
+
+
+
+
